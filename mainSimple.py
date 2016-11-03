@@ -27,7 +27,7 @@ def main():
 def nt_init():
     try:
         init = True
-        NetworkTable.setIPAddress('10.5.1.2')
+        NetworkTable.setIPAddress('10.5.1.141')
         NetworkTable.setClientMode()
         NetworkTable.initialize()
     except:
