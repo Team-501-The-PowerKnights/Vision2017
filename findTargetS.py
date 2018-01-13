@@ -29,7 +29,7 @@ def findValids(img_orig, filename, debug):
     # Make copy of frame/image to work with
     img = np.copy(img_orig)
     
-    # Load calibration parameters
+    # LOADING CALIBRATION FROM FILE -- TO FIX -- THIS IS A TEXT FILE
     values = np.load(filename)
     brightness = float(values['brightness'])
     lower_bound = values['lower']
