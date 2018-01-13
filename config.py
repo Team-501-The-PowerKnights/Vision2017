@@ -5,7 +5,7 @@ config = configparser.ConfigParser()
 
 def runConfig():
    """
-   reads a  configuration file in standard format.
+   reads a  configuration file (config.ini) in standard format.
    [header]
    config_item  = value
 

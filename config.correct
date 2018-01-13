@@ -1,6 +1,6 @@
 [os]
 operatingSystem = linux
 [camera]
-cameraDevice = /dev/video0
+cameraDevice = "http://localhost:1180/?action=stream?dummy=param.mjpg"
 [mask]
 mask = 255,255,255
