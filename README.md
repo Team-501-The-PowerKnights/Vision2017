@@ -18,6 +18,10 @@ v4l2-ctrls --set-ctrl white_balance_temperature_auto=0
 v4l2-ctrls --set-ctrl white_balance_temperature=5280
 
 
+CV2 MUST SEE A .MJPG EXTENSION A LA:
+
+http://localhost:1180/?action=stream?dummy=param.mjpg
+
 
 
 
