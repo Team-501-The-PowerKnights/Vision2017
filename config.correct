@@ -1,0 +1,6 @@
+[os]
+operatingSystem = linux
+[camera]
+cameraDevice = /dev/video0
+[mask]
+mask = 255,255,255
