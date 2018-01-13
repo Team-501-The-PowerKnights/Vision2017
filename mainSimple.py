@@ -9,50 +9,56 @@ import findTargetS as FT
 import NetworkTableModule as NT
 import cv2
 import time
-
-directory = 'C:/Users/Ithier/Documents/FIRST/2017/Off Season/'
-filename = directory + 'imageValues.npz' # folder npz file is in. NPZ file contains hsv values and brightness value
-url = 0
-debug = 1
-validCount = 0 # how many valid targets we've found
-n = 0
-freqFramesNT = 10 # how often we're sending to network tables
-
-#############################################################################
 from networktables import NetworkTable
 import logging
+import numpy as np
 
-#if NetworkTable._staticProvider is None:
+url = 0             # CAMERA ADDRESS, 0 is local on Windows
+debug = 1           # debug level
+validCount = 0      # how many valid targets we've found
+n = 0               # iterator
+freqFramesNT = 10   # send to NetworkTables ever X frames
+
+logging.basicConfig(level=logging.DEBUG)
+
+def load_file():
+    """
+    loads npz file (camera calibration)
+    returns float,int,int
+    """
+    filename = "imageValues.npz" # folder npz file is in. NPZ file contains hsv values and brightness value
+    values = np.load(filename)
+    brightness = float(values['brightness'])
+    lower_bound = values['lower']
+    upper_bound = values['upper']
+
 try:
-    logging.basicConfig(level=logging.DEBUG)
     NetworkTable.setIPAddress('10.5.1.2')
     NetworkTable.setClientMode()
     NetworkTable.initialize()
 except:
     if debug == 1:
-        print("Network tables has already been initialized")
+        print("Unable to initialize NetworkTables, exiting.")
+        with open("vision_error.log", "w") as text_file:
+            text_file.write("unable to initialize networktables. exited.")
 
+try:
+    sd = NetworkTable.getTable("Camera")
+except:
+    if debug ==1:
+        print("unable to load camera table")
 
-sd = NetworkTable.getTable("Camera")
-#############################################################################
 cap = cv2.VideoCapture(url) # capture camera, 0 is laptop cam, numbers after that are cameras attached
 time.sleep(2)
 # Check to make sure cap was initialized in capture
 if debug:
     if cap.isOpened():
-        print('Cap succesfully opened')
-        print(cap.grab())
+        print('Capture Initialized.')
     else:
-        print('Cap initialization failed')
-    
-    # Create resizable window for camera 
-    cv2.namedWindow('Camera Frame', cv2.WINDOW_NORMAL)
+        print('Capture Failed.')
 
 while(cap.isOpened()):
-    # Capture frame-by-frame
-    #    ret returns true or false (T if img read correctly); frame is array of img    
     ret, frame = cap.read()
-    
     if ret == True: # if frame succesfully read
         if frame is None: # if no frame print a blank image
             if debug:
