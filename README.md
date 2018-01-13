@@ -11,5 +11,10 @@ turns off auto-exposure
 v4l2-ctrls --set-ctrl exposure_absolute=50
 sets exposure value to 50 (pretty dark)
 
+v4l2-ctrls --set-ctrl white_balance_temperature_auto=0
+v4l2-ctrls --set-ctrl white_balance_temperature=5280
+
+
+
 
 
