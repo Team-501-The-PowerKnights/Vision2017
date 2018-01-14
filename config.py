@@ -21,10 +21,20 @@ def runConfig():
    try:
       os = config['os']['operatingSystem']
       camera = config['camera']['cameraDevice']
-      mask = config['mask']['mask']
-      mask = mask.split(",")
+      red_upper = config['mask']['red_upper']
+      red_upper = red_upper.split(",")
+      red_lower = config['mask']['red_lower']
+      red_lower = red_lower.split(",")
+      blue_upper = config['mask']['blue_upper']
+      blue_upper = blue_upper.split(",")
+      blue_lower = config['mask']['blue_lower']
+      blue_lower = blue_lower.split(",")
+      green_upper = config['mask']['green_upper']
+      green_upper = green_upper.split(",")
+      green_lower = config['mask']['green_lower']
+      green_lower = green_lower.split(",")
    except:
-      print("ERROR: config.ini does not contain correct parameters. see ./config.py ")
+      print("ERROR: config.ini does not contain correct parameters. see ./config.correct ")
       sys.exit(1)
 
    if not os:
@@ -34,7 +44,12 @@ def runConfig():
       die=1
    sacrificial = None
    try:
-      sacrificial=mask[2]
+      sacrificial=red_upper[2]
+      sacrificial=red_lower[2]
+      sacrificial=blue_upper[2]
+      sacrificial=blue_lower[2]
+      sacrificial=green_upper[2]
+      sacrificial=green_lower[2]
    except IndexError:
       print("ERROR: mask configuration incomplete")
       die=1
@@ -45,6 +60,6 @@ def runConfig():
       print("FATAL ERROR: unable to load vision configuration. Exiting.")
       sys.exit(1) 
 
-   return os, camera, mask
+   return os, camera, red_upper, red_lower, blue_upper, blue_lower, green_upper, green_lower
 
 

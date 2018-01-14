@@ -3,4 +3,9 @@ operatingSystem = linux
 [camera]
 cameraDevice = "http://localhost:1180/?action=stream?dummy=param.mjpg"
 [mask]
-mask = 255,255,255
+red_upper = 255,255,255
+red_lower = 255,255,255
+blue_upper = 255,255,255
+blue_lower = 255,255,255
+green_upper = 255,255,255
+green_lower = 255,255,255

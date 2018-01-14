@@ -6,7 +6,7 @@ from config import runConfig
 
 def main():
    print("INFO: initializingvision manager")
-   os, cameraDevice, mask = runConfig()
+   os, cameraDevice, red_upper, red_lower, blue_upper, blue_lower, green_upper, green_lower = runConfig()
 
 
 
