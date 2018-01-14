@@ -33,6 +33,7 @@ def runConfig():
       green_upper = green_upper.split(",")
       green_lower = config['mask']['green_lower']
       green_lower = green_lower.split(",")
+      freqFrameNT = config['framerate']['freqFrameNT']
    except:
       print("ERROR: config.ini does not contain correct parameters. see ./config.correct ")
       sys.exit(1)
@@ -51,15 +52,20 @@ def runConfig():
       sacrificial=green_upper[2]
       sacrificial=green_lower[2]
    except IndexError:
-      print("ERROR: mask configuration incomplete")
+      print("ERROR: calibration configuration incomplete")
       die=1
    if not sacrificial:
       die=1
-
+   if not freqFrameNT:
+      print("INFO: framerate not specified, using default of 10.")
+      freqFrameNT = 10
    if die > 0:
       print("FATAL ERROR: unable to load vision configuration. Exiting.")
       sys.exit(1) 
 
-   return os, camera, red_upper, red_lower, blue_upper, blue_lower, green_upper, green_lower
+   red = {"red_upper":red_upper, "red_lower":red_lower }
+   blue = {"blue_upper":blue_upper, "blue_lower":blue_lower }
+   green = {"green_upper":green_upper, "green_lower":green_lower }
+   calibration = {"red":red, "blue":blue, "green":green}
 
-
+   return os, camera, calibration, freqFrameNT

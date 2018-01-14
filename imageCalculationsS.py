@@ -11,7 +11,7 @@ import cv2
 import math
 from collections import Counter 
 
-def findAnglePeg(image, cx1, cx2, debug):   
+def findAnglePeg(image, cx1, cx2):
     """
     Input: image, cx1 -> float center coordinate of one rectangle, cx2 -> float center coordinate
     of second rectangle, debug -> boolean
@@ -32,14 +32,10 @@ def findAnglePeg(image, cx1, cx2, debug):
     offsetpx = (w/2.0) - cx # offset from center of camera image to center of target (pixels)
     
     angle= int(horizontal_cameraFOV * (offsetpx / w)*100.0)/100.0 
-    
-    if debug:
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        image = cv2.putText(image,'Angle: ' + str(angle) + ' deg',(20,85), font, 1,(0,0,255),2,cv2.LINE_AA)
-    
+
     return angle
 
-def findDistance(image, Rect_coor, debug): ############## NEED TO UPDATE VARIABLES #############
+def findDistance(image, Rect_coor): ############## NEED TO UPDATE VARIABLES #############
     pegHeight = 13.25/12.0 # ft
     targetWidth = 2 # inches
     cameraHeight = 1.5 # ft
@@ -70,13 +66,7 @@ def findDistance(image, Rect_coor, debug): ############## NEED TO UPDATE VARIABL
         distance_final = int(fixDistance(distance_horizontal*12)*100.0)/100.0 # in
     except:
         distance_final = totalDistance_W*12.0 #in
-        if debug:
-            print("May be error with distance calculation")
-    
-    if debug:
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        image = cv2.putText(image,'Distance: ' + str(distance_final) + ' in',(20,50), font, 1,(0,0,255),2,cv2.LINE_AA)
-    
+
     return distance_final
     
     

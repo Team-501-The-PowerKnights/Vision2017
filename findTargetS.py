@@ -11,7 +11,7 @@ import manipulateImageS as MI
 import imageCalculationsS as IC
 import validateTargetS as VT
 
-def findValids(img_orig, filename, debug):
+def findValids(img_orig, calibration):
     """
     Input: img_orig -> image, filename of npz file, whether we're in debug mode
     Output: angle -> float, distance -> float, validUpdate -> boolean of whether we've found
@@ -21,23 +21,19 @@ def findValids(img_orig, filename, debug):
     This function uses the npz file values to create a mask of the target. It then
     finds valid targets, calculates the angle and distance, and visualizes the result
     """
+
+
     global angle, distance, validUpdate
     angle = 1000
     distance = 0
     validUpdate = False
     
-    # Make copy of frame/image to work with
     img = np.copy(img_orig)
-    
-    # Load calibration parameters
-    values = np.load(filename)
-    brightness = float(values['brightness'])
-    lower_bound = values['lower']
-    upper_bound = values['upper']
-    
-    # Create img with parameters
-    img_darker = MI.darkenImage(img, brightness)
-    hsv = cv2.cvtColor(img_darker, cv2.COLOR_BGR2HSV)
+
+    lower_bound = calibration["green"]["green_lower"]
+    upper_bound = calibration["green"]["green_upper"]
+
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     mask_orig = cv2.inRange(hsv,lower_bound,upper_bound)
     
     mask= np.copy(mask_orig)
@@ -49,7 +45,7 @@ def findValids(img_orig, filename, debug):
     mask = np.copy(maskc)
     
     # Determine if there are any valid targets
-    valid, cnt, Rect_coor, BFR_img, hull = VT.findValidTarget(img, mask, debug)
+    valid, cnt, Rect_coor, BFR_img, hull = VT.findValidTarget(img, mask)
 
     if valid: 
         validUpdate = True
@@ -61,18 +57,11 @@ def findValids(img_orig, filename, debug):
         cy = (cy1 + cy2) / 2
         
         # Calculate angle and distance
-        angle = IC.findAnglePeg(BFR_img, cx1, cx2, debug)
-        distance = IC.findDistance(BFR_img, Rect_coor, debug)        
-        
-        # Visualize calculation
-        if debug:
-            MI.drawLine2Target(BFR_img, cx, cy)  
-            MI.drawCrossHairs(BFR_img)          
+        angle = IC.findAnglePeg(BFR_img, cx1, cx2)
+        distance = IC.findDistance(BFR_img, Rect_coor)
+
     else:
         validUpdate = False
         BFR_img = img_orig
-        if debug:
-            print('No Valid Update')
-            MI.drawCrossHairs(BFR_img)
-    
+        print("No Valid targets found")
     return angle, distance, validUpdate, BFR_img, mask_orig, cnt

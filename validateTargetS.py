@@ -15,7 +15,7 @@ def zeroVariables(image):
     hull = [0,0]
     return BFR_img, hull
 
-def isValidShapePeg(contour, debug):
+def isValidShapePeg(contour):
     matchThreshold = 0.6
     #matchThreshold = 0.198
     #matchThreshold = 0.12
@@ -32,23 +32,20 @@ def isValidShapePeg(contour, debug):
     img, contours, hierarchy = cv2.findContours(thresh,2,1)
     cnt = contours[0]
     match_quality = cv2.matchShapes(cnt,contour,1,0.0)
-    if debug:
-        print("Match: " + str(match_quality))
-    
     if match_quality < matchThreshold:
         return True
     else:
         return False
 
-def isValid(contour, debug):
-    valid= isValidShapePeg(contour, debug)
+def isValid(contour):
+    valid= isValidShapePeg(contour)
     
     if valid == False:
         return False
     else:
         return True
 
-def findValidTarget(image, mask, debug):
+def findValidTarget(image, mask):
     numContours = 6
     BFR_img = np.copy(image)
     areas = []
@@ -88,11 +85,9 @@ def findValidTarget(image, mask, debug):
                 
                 if len(corners) == 4:
                     # Determine if contour meets specs
-                    appropriateCnt = isValid(biggestContours[i], debug)
+                    appropriateCnt = isValid(biggestContours[i])
                     
                     if appropriateCnt == True:
-                        if debug:
-                            MI.drawBFR(BFR_img, box, corners)
                         cnt.append(biggestContours[i])
                         hull.append(hull_indiv)
                         Rect_coor.append(IC.organizeCorners(corners))
@@ -107,17 +102,12 @@ def findValidTarget(image, mask, debug):
         
     if len(cnt) == 2:
         valid = True
-        if debug:
-            print('Two valid contours')
     elif len(cnt) == 1:
         valid = False
         BFR_img, hull = zeroVariables(image)
-        if debug:
-            print('One valid contour')
     else:
         valid = False
         BFR_img, hull = zeroVariables(image)
         cnt = [0,0]
-        
-        
+
     return valid, cnt, Rect_coor, BFR_img, hull

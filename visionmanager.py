@@ -1,13 +1,10 @@
 from config import runConfig
 
 
-
-
-
 def main():
-   print("INFO: initializingvision manager")
-   os, cameraDevice, red_upper, red_lower, blue_upper, blue_lower, green_upper, green_lower = runConfig()
-
+    print("INFO: initializingvision manager")
+    os, cameraDevice, calibration, freqFrameNT = runConfig()
+    print(os, cameraDevice, calibration, freqFrameNT)
 
 
 if __name__ == "__main__":

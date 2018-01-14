@@ -5,91 +5,97 @@ Created on Tue Sep 19 11:52:35 2017
 @author: Ithier
 """
 
-import findTargetS as FT
-import NetworkTableModule as NT
 import cv2
 import time
-
-directory = 'C:/Users/Ithier/Documents/FIRST/2017/Off Season/'
-filename = directory + 'imageValues.npz' # folder npz file is in. NPZ file contains hsv values and brightness value
-url = 0
-debug = 1
-validCount = 0 # how many valid targets we've found
-n = 0
-freqFramesNT = 10 # how often we're sending to network tables
-
-#############################################################################
-from networktables import NetworkTable
+import sys
 import logging
 
-#if NetworkTable._staticProvider is None:
-try:
-    logging.basicConfig(level=logging.DEBUG)
-    NetworkTable.setIPAddress('10.5.1.2')
-    NetworkTable.setClientMode()
-    NetworkTable.initialize()
-except:
-    if debug == 1:
-        print("Network tables has already been initialized")
+from config import runConfig
+from networktables import NetworkTable
+import findTargetS as FT
+
+logging.basicConfig(level=logging.DEBUG)
+
+os, camera_location, calibration, freqFramesNT = runConfig()
+
+def main():
+    camera_table = nt_init()
+    cap = cap_init(camera_location)
+    run(cap, camera_table, calibration, freqFramesNT)
 
 
-sd = NetworkTable.getTable("Camera")
-#############################################################################
-cap = cv2.VideoCapture(url) # capture camera, 0 is laptop cam, numbers after that are cameras attached
-time.sleep(2)
-# Check to make sure cap was initialized in capture
-if debug:
-    if cap.isOpened():
-        print('Cap succesfully opened')
-        print(cap.grab())
+def nt_init():
+    try:
+        init = True
+        NetworkTable.setIPAddress('10.5.1.2')
+        NetworkTable.setClientMode()
+        NetworkTable.initialize()
+    except:
+        print("Unable to initialize network tables.")
+        init = False
+    try:
+        camera_table = NetworkTable.getTable("Camera")
+    except:
+        print("unable to get camera networktable")
+        init = False
+    if not init:
+        time.sleep(1)
+        print("retrying nt_init().")
+        return nt_init()
     else:
-        print('Cap initialization failed')
-    
-    # Create resizable window for camera 
-    cv2.namedWindow('Camera Frame', cv2.WINDOW_NORMAL)
+        return camera_table
 
-while(cap.isOpened()):
-    # Capture frame-by-frame
-    #    ret returns true or false (T if img read correctly); frame is array of img    
-    ret, frame = cap.read()
-    
-    if ret == True: # if frame succesfully read
-        if frame is None: # if no frame print a blank image
-            if debug:
-                print('Frame is None')
-                Processed_frame = cv2.imread('1.png', 1)
-                mask = Processed_frame
-    
-        else:
+
+def nt_send(camera_table, Angle, Distance, validCount):
+    try:
+        camera_table.putNumber('Angle', Angle)
+        camera_table.putNumber('ValidCount', validCount)
+        camera_table.putNumber('Distance', Distance)
+    except:
+        print("Unable to send data to networktables.")
+
+
+def cap_init(camera_location):
+    vid_cap = True
+    retries = 0
+    cap = None
+    try:
+        cap = cv2.VideoCapture(camera_location)
+    except:
+        print("unable to start video capture, will retry.")
+        vid_cap = False
+    while cap.isOpened() and retries < 10:
+        print('Cap open successful')
+        print('cap.grab(): ' + str(cap.grab()))
+        break
+    else:
+        print('Cap open failed')
+        retries += 1
+        time.sleep(1)
+        vid_cap = False
+    if vid_cap:
+        return cap
+    else:
+        print("video capture failed. exiting.")
+        sys.exit()
+
+
+def run(cap, camera_table, calibration, freqFramesNT):
+    validCount = 0
+    n = 0
+    while(cap.isOpened()):
+        ret, frame = cap.read()
+        if ret: # if frame succesfully read
             try:
-                # Process image
-                Angle, Distance, validUpdate, Processed_frame, mask, cnt = FT.findValids(frame, filename, debug)
-            
-                if validUpdate: 
+                Angle, Distance, validUpdate, Processed_frame, mask, cnt = FT.findValids(frame, calibration)
+                if validUpdate:
                     validCount += 1
-                
                 if n > freqFramesNT:
                     # Send to NetworkTable
-                    NT.sendValues(sd, Angle, Distance, validCount)
+                    nt_send(camera_table, Angle, Distance, validCount)
                     n = 0
                 else:
                     n += 1
                 
             except:
-                Processed_frame = cv2.imread('1.jpg', 1)
-                mask = Processed_frame
-                if debug:
-                    print('There was an error with findValids')
-    
-    if debug:    
-        # Display the resulting frame
-        cv2.imshow('Camera Frame', Processed_frame)
-        cv2.imshow('Mask', mask)
-    
-        if cv2.waitKey(5) & 0xFF == ord('q'):
-            break
-    
-# When capture done, release it
-cap.release() # !! important to do
-if debug:
-    cv2.destroyAllWindows()
+                print('There was an error with findValids')
