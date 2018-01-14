@@ -11,7 +11,7 @@ import sys
 import logging
 
 from config import runConfig
-from networktables import NetworkTable
+from networktables import NetworkTables
 import findTargetS as FT
 
 logging.basicConfig(level=logging.DEBUG)
