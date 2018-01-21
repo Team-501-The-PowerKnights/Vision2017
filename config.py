@@ -34,6 +34,8 @@ def runConfig():
       green_lower = config['mask']['green_lower']
       green_lower = green_lower.split(",")
       freqFrameNT = config['framerate']['freqFrameNT']
+      debug = config['debug']['debug']
+      search = config['search']['search']
    except:
       print("ERROR: config.ini does not contain correct parameters. see ./config.correct ")
       sys.exit(1)
@@ -45,27 +47,35 @@ def runConfig():
       die=1
    sacrificial = None
    try:
-      sacrificial=red_upper[2]
-      sacrificial=red_lower[2]
-      sacrificial=blue_upper[2]
-      sacrificial=blue_lower[2]
-      sacrificial=green_upper[2]
-      sacrificial=green_lower[2]
+      sacrificial = red_upper[2]
+      sacrificial = red_lower[2]
+      sacrificial = blue_upper[2]
+      sacrificial = blue_lower[2]
+      sacrificial = green_upper[2]
+      sacrificial = green_lower[2]
    except IndexError:
       print("ERROR: calibration configuration incomplete")
-      die=1
+      die = 1
    if not sacrificial:
-      die=1
+      die = 1
    if not freqFrameNT:
       print("INFO: framerate not specified, using default of 10.")
       freqFrameNT = 10
    if die > 0:
       print("FATAL ERROR: unable to load vision configuration. Exiting.")
-      sys.exit(1) 
+      sys.exit(1)
+   if debug == 1:
+      debug = True
+   else:
+      debug = False
+   if search == 1:
+      search = True
+   else:
+      search = False
 
-   red = {"red_upper":red_upper, "red_lower":red_lower }
-   blue = {"blue_upper":blue_upper, "blue_lower":blue_lower }
-   green = {"green_upper":green_upper, "green_lower":green_lower }
-   calibration = {"red":red, "blue":blue, "green":green}
+   red = {"red_upper": red_upper, "red_lower": red_lower}
+   blue = {"blue_upper": blue_upper, "blue_lower": blue_lower}
+   green = {"green_upper": green_upper, "green_lower": green_lower}
+   calibration = {"red": red, "blue": blue, "green": green, "debug": debug, "search": search}
 
    return os, camera, calibration, freqFrameNT
