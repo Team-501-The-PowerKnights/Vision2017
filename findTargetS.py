@@ -30,8 +30,8 @@ def findValids(img_orig, calibration):
     
     img = np.copy(img_orig)
 
-    lower_bound = calibration["green"]["green_lower"]
-    upper_bound = calibration["green"]["green_upper"]
+    lower_bound = np.array(calibration["green"]["green_lower"])
+    upper_bound = np.array(calibration["green"]["green_upper"])
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     mask_orig = cv2.inRange(hsv,lower_bound,upper_bound)
