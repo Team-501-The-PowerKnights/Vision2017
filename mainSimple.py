@@ -25,7 +25,6 @@ os, camera_location, calibration, freqFramesNT = runConfig()
 def main():
     camera_table = nt_init()
     cap = cap_init(camera_location)
-    print(cap.isOpened())
     run(cap, camera_table, calibration, freqFramesNT)
 
 
@@ -44,10 +43,12 @@ def nt_init():
         camera_table = NetworkTables.getTable("Camera")
     except:
         print("unable to get camera networktable")
+        NetworkTables.stop()
+        NetworkTables.destroy()
         init = False
     if not init:
         time.sleep(1)
-        print("retrying nt_init().")
+        print("retrying networktables initialization.")
         return nt_init()
     else:
         return camera_table

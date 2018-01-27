@@ -9,3 +9,9 @@ blue_upper = 255,255,255
 blue_lower = 255,255,255
 green_upper = 255,255,255
 green_lower = 255,255,255
+[framerate]
+freqFrameNT = 10
+[debug]
+debug = 0
+[search]
+search = 0
