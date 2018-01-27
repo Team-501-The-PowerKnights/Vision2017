@@ -36,6 +36,8 @@ def runConfig():
       freqFrameNT = int(config['framerate']['freqFrameNT'])
       debug = config['debug']['debug']
       search = config['search']['search']
+      vertx = int(config['vertices']['vertx'])
+      verty = int(config['vertices']['verty'])
    except:
       print("ERROR: config.ini does not contain correct parameters. see ./config.correct ")
       sys.exit(1)
@@ -61,6 +63,12 @@ def runConfig():
    if not freqFrameNT:
       print("INFO: framerate not specified, using default of 10.")
       freqFrameNT = 10
+   if not vertx:
+      print("Vertices incomplete")
+      die = 1
+   if not verty:
+      print("Vertices incomplete")
+      die = 1
    if die > 0:
       print("FATAL ERROR: unable to load vision configuration. Exiting.")
       sys.exit(1)
@@ -78,4 +86,4 @@ def runConfig():
    green = {"green_upper": green_upper, "green_lower": green_lower}
    calibration = {"red": red, "blue": blue, "green": green, "debug": debug, "search": search}
 
-   return os, camera, calibration, freqFrameNT
+   return os, camera, calibration, freqFrameNT, vertx, verty

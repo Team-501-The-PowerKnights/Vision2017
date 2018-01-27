@@ -15,31 +15,17 @@ def zeroVariables(image):
     hull = [0,0]
     return BFR_img, hull
 
-def isValidShapePeg(contour):
+def isValidShape(contour, rect_cnt):
     matchThreshold = 0.35
 
-    rectangle = np.zeros((200, 200, 3), np.uint8)
-    cv2.rectangle(rectangle,(20, 20), (60, 120), (255, 255, 255), -1)
-    rectangle = cv2.cvtColor(rectangle, cv2.COLOR_RGB2GRAY)
-
-    ret, thresh = cv2.threshold(rectangle, 127, 255, cv2.THRESH_BINARY)
-    img, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,1)
-    cnt = contours[0]
-    match_quality = cv2.matchShapes(cnt, contour, 1, 0.0)
+    match_quality = cv2.matchShapes(rect_cnt, contour, 1, 0.0)
     if match_quality < matchThreshold:
         return True
     else:
         return False
 
-def isValid(contour):
-    valid= isValidShapePeg(contour)
-    
-    if valid == False:
-        return False
-    else:
-        return True
 
-def findValidTarget(image, mask):
+def findValidTarget(image, mask, rect_cnt):
     numContours = 6
     BFR_img = np.copy(image)
     areas = []
@@ -79,9 +65,9 @@ def findValidTarget(image, mask):
                 
                 if len(corners) == 4:
                     # Determine if contour meets specs
-                    appropriateCnt = isValid(biggestContours[i])
+                    appropriateCnt = isValidShape(biggestContours[i], rect_cnt)
                     
-                    if appropriateCnt == True:
+                    if appropriateCnt:
                         cnt.append(biggestContours[i])
                         hull.append(hull_indiv)
                         Rect_coor.append(IC.organizeCorners(corners))

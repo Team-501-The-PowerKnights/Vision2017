@@ -12,7 +12,7 @@ import imageCalculationsS as IC
 import validateTargetS as VT
 from datetime import datetime
 
-def findValids(img_orig, calibration):
+def findValids(img_orig, calibration, rect_cnt):
     """
     Input: img_orig -> image, filename of npz file, whether we're in debug mode
     Output: angle -> float, distance -> float, validUpdate -> boolean of whether we've found
@@ -59,7 +59,7 @@ def findValids(img_orig, calibration):
     # print("search is", search)
     # Determine if there are any valid targets
     if search:
-        valid, cnt, Rect_coor, BFR_img, hull = VT.findValidTarget(img, mask)
+        valid, cnt, Rect_coor, BFR_img, hull = VT.findValidTarget(img, mask, rect_cnt)
 
         if valid:
             validUpdate = True
