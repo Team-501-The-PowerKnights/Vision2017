@@ -16,22 +16,16 @@ def zeroVariables(image):
     return BFR_img, hull
 
 def isValidShapePeg(contour):
-    matchThreshold = 0.6
-    #matchThreshold = 0.198
-    #matchThreshold = 0.12
-    '''
-    Rectangle.png was created with this code
-    cv2.rectangle(rectangle,(20,20),(60,120),(255,255,255),-1)  # coordinates chosen by making sure it has same aspect ratio as real life targe
-    cv2.imwrite('rectangle.png', rectangle)
-    '''
-    # load image to compare 
-    rectangle = cv2.imread('rectangle.png', 0)
-    
-    # Threshold and get contours
+    matchThreshold = 0.35
+
+    rectangle = np.zeros((200, 200, 3), np.uint8)
+    cv2.rectangle(rectangle,(20, 20), (60, 120), (255, 255, 255), -1)
+    rectangle = cv2.cvtColor(rectangle, cv2.COLOR_RGB2GRAY)
+
     ret, thresh = cv2.threshold(rectangle, 127, 255, cv2.THRESH_BINARY)
-    img, contours, hierarchy = cv2.findContours(thresh,2,1)
+    img, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,1)
     cnt = contours[0]
-    match_quality = cv2.matchShapes(cnt,contour,1,0.0)
+    match_quality = cv2.matchShapes(cnt, contour, 1, 0.0)
     if match_quality < matchThreshold:
         return True
     else:

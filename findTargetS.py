@@ -10,6 +10,7 @@ import numpy as np
 import manipulateImageS as MI 
 import imageCalculationsS as IC
 import validateTargetS as VT
+from datetime import datetime
 
 def findValids(img_orig, calibration):
     """
@@ -21,9 +22,9 @@ def findValids(img_orig, calibration):
     This function uses the npz file values to create a mask of the target. It then
     finds valid targets, calculates the angle and distance, and visualizes the result
     """
-
-    debug = calibration["debug"]["debug"]
-    search = calibration["search"]["search"]
+    before_basic = datetime.now()
+    debug = calibration["debug"]
+    search = calibration["search"]
 
     global angle, distance, validUpdate
     angle = 1000
@@ -45,20 +46,24 @@ def findValids(img_orig, calibration):
     mask = np.copy(mask_eroded_dilated)
     ret, mask_threshold = cv2.threshold(mask, 127, 255, 0)
     mask = np.copy(mask_threshold)
+    after_basic = datetime.now()
+    time_to_basic = after_basic- before_basic
+    # print("microseconds to perform basic operations:", time_to_basic.microseconds)
 
     if debug:
-        cv2.imwrite('original_frame.jpg', img_orig)
-        cv2.imwrite('original_mask.jpg', mask_orig)
-        cv2.imwrite('mask_eroded_dilated.jpg', mask_eroded_dilated)
-        cv2.imwrite('mask_threshold', mask_threshold)
+        cv2.imwrite('original_frame.png', img_orig)
+        cv2.imwrite('original_mask.png', mask_orig)
+        cv2.imwrite('mask_eroded_dilated.png', mask_eroded_dilated)
+        cv2.imwrite('mask_threshold.png', mask_threshold)
 
+    # print("search is", search)
     # Determine if there are any valid targets
     if search:
         valid, cnt, Rect_coor, BFR_img, hull = VT.findValidTarget(img, mask)
 
         if valid:
             validUpdate = True
-    
+            print("Valid target found.")
         # Find and draw center
             cx1, cy1 = IC.findCenter(cnt[0])
             cx2, cy2 = IC.findCenter(cnt[1])
@@ -72,7 +77,7 @@ def findValids(img_orig, calibration):
         else:
             validUpdate = False
             BFR_img = img_orig
-            print("No Valid targets found")
+            print("No valid targets found.")
         return angle, distance, validUpdate, BFR_img, mask_orig, cnt
     else:
         return 0, 0, 0, img_orig, mask_orig, [0, 0]

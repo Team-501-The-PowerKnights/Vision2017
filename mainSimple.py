@@ -10,6 +10,7 @@ import time
 import sys
 sys.path.append('/usr/local/lib')
 import logging
+from datetime import datetime
 
 from config import runConfig
 from networktables import NetworkTables
@@ -65,8 +66,8 @@ def nt_send(camera_table, Angle, Distance, validCount):
 
 def cap_init(camera_location):
     try:
-        print("camera location is:" + camera_location)
-        cap = cv2.VideoCapture(camera_location)
+        #print("camera location is:" + camera_location)
+        cap = cv2.VideoCapture("http://127.0.0.1:1180/?action=stream?dummy=param.mjpeg")
         time.sleep(2)
     except:
         print("Execption on VideoCapture init. Dying")
@@ -78,9 +79,15 @@ def run(cap, camera_table, calibration, freqFramesNT):
     validCount = 0
     n = 0
     while(cap.isOpened()):
+        before_complete_run=datetime.now()
+        before_read = datetime.now()
         ret, frame = cap.read()
+        after_read = datetime.now()
+        time_to_read = after_read-before_read
+        #print("Microseconds to read the capture:", time_to_read.microseconds)
         if ret: # if frame succesfully read
-            try:
+            #try:
+                before_run = datetime.now()
                 Angle, Distance, validUpdate, Processed_frame, mask, cnt = FT.findValids(frame, calibration)
                 if validUpdate:
                     validCount += 1
@@ -90,9 +97,14 @@ def run(cap, camera_table, calibration, freqFramesNT):
                     n = 0
                 else:
                     n += 1
-                
-            except:
-                print('There was an error with findValids')
+                after_run = datetime.now()
+                time_to_run = after_run - before_run
+                #print("microseconds to run findValids:",time_to_run.microseconds)
+                after_complete_run = datetime.now()
+                time_to_complete_run = after_complete_run - before_complete_run
+                print("microseconds to complete run:", time_to_complete_run.microseconds)
+            #except:
+             #   print('There was an error with findValids')
     else:
         print('cap is not opened')
 

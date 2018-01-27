@@ -30,10 +30,10 @@ def runConfig():
       blue_lower = config['mask']['blue_lower']
       blue_lower = blue_lower.split(",")
       green_upper = config['mask']['green_upper']
-      green_upper = green_upper.split(",")
+      green_upper = list(map(int, green_upper.split(',')))
       green_lower = config['mask']['green_lower']
-      green_lower = green_lower.split(",")
-      freqFrameNT = config['framerate']['freqFrameNT']
+      green_lower = list(map(int, green_lower.split(',')))
+      freqFrameNT = int(config['framerate']['freqFrameNT'])
       debug = config['debug']['debug']
       search = config['search']['search']
    except:
@@ -64,15 +64,15 @@ def runConfig():
    if die > 0:
       print("FATAL ERROR: unable to load vision configuration. Exiting.")
       sys.exit(1)
-   if debug == 1:
+   if debug == '1':
       debug = True
    else:
       debug = False
-   if search == 1:
+   if search == '1':
       search = True
    else:
       search = False
-
+   print("debug: ", debug)
    red = {"red_upper": red_upper, "red_lower": red_lower}
    blue = {"blue_upper": blue_upper, "blue_lower": blue_lower}
    green = {"green_upper": green_upper, "green_lower": green_lower}

@@ -109,7 +109,7 @@ def organizeCorners(corners):
     duplicates determines the methods to be used to determine the order of the coordinates. This is done below
     '''
     # Check for duplicate and find value
-    duplicate = len(x) != len(set(x)) # returns True of False on whether there is a duplicate in the x array
+    duplicate = ( len(x) != len(set(x)) ) # returns True of False on whether there is a duplicate in the x array
     c = Counter(x).items() # gives array listing the numbers in the array and how many times they occur
     c = list(c)
     doubleVal = [] # this list keeps track of the VALUES of the x coordinates that are repeated. It will be empty if there are no repeats
