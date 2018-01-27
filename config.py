@@ -30,9 +30,9 @@ def runConfig():
       blue_lower = config['mask']['blue_lower']
       blue_lower = blue_lower.split(",")
       green_upper = config['mask']['green_upper']
-      green_upper = green_upper.split(",")
+      green_upper = list(map(int, green_upper.split(',')))
       green_lower = config['mask']['green_lower']
-      green_lower = green_lower.split(",")
+      green_lower = list(map(int, green_lower.split(',')))
       freqFrameNT = config['framerate']['freqFrameNT']
       debug = config['debug']['debug']
       search = config['search']['search']

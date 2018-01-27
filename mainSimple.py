@@ -65,9 +65,10 @@ def nt_send(camera_table, Angle, Distance, validCount):
 
 def cap_init(camera_location):
     try:
-        print("camera location is:" + camera_location)
-        cap = cv2.VideoCapture(camera_location)
-        time.sleep(2)
+        print("camera location is: " + camera_location)
+        cap = cv2.VideoCapture('http://127.0.0.1:1180/?action=stream?dummy=param.mjpeg')
+        if cap.isOpened():
+            print("Opened")
     except:
         print("Execption on VideoCapture init. Dying")
         sys.exit()
@@ -80,19 +81,19 @@ def run(cap, camera_table, calibration, freqFramesNT):
     while(cap.isOpened()):
         ret, frame = cap.read()
         if ret: # if frame succesfully read
-            try:
-                Angle, Distance, validUpdate, Processed_frame, mask, cnt = FT.findValids(frame, calibration)
-                if validUpdate:
-                    validCount += 1
-                if n > freqFramesNT:
-                    # Send to NetworkTable
-                    nt_send(camera_table, Angle, Distance, validCount)
-                    n = 0
-                else:
-                    n += 1
+            #try:
+            Angle, Distance, validUpdate, Processed_frame, mask, cnt = FT.findValids(frame, calibration)
+            if validUpdate:
+                validCount += 1
+            if n > freqFramesNT:
+                # Send to NetworkTable
+                nt_send(camera_table, Angle, Distance, validCount)
+                n = 0
+            else:
+                n += 1
                 
-            except:
-                print('There was an error with findValids')
+            #except:
+            #    print('There was an error with findValids')
     else:
         print('cap is not opened')
 

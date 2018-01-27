@@ -31,7 +31,8 @@ def findValids(img_orig, calibration):
     validUpdate = False
     
     img = np.copy(img_orig)
-
+    print(calibration["green"]["green_lower"])
+    print(calibration["green"]["green_upper"])
     lower_bound = np.array(calibration["green"]["green_lower"])
     upper_bound = np.array(calibration["green"]["green_upper"])
 
