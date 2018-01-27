@@ -29,14 +29,15 @@ def findValids(img_orig, calibration):
     validUpdate = False
     
     img = np.copy(img_orig)
-
+    print(calibration["green"]["green_lower"])
+    print(calibration["green"]["green_upper"])
     lower_bound = np.array(calibration["green"]["green_lower"])
     upper_bound = np.array(calibration["green"]["green_upper"])
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     mask_orig = cv2.inRange(hsv,lower_bound,upper_bound)
     
-    mask= np.copy(mask_orig)
+    mask = np.copy(mask_orig)
     
     # Clean up mask with dilate and erode and threshold
     mask = MI.dilateAndErode(mask, 5)
