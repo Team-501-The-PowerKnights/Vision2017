@@ -57,7 +57,7 @@ def nt_init():
         return camera_table
 
 def create_rect():
-    rectangle = np.zeros((200, 200, 3), np.uint8)
+    rectangle = np.zeros((350, 350, 3), np.uint8)
     cv2.rectangle(rectangle, (20, 20), (vertx, verty), (255, 255, 255), -1)
     rectangle = cv2.cvtColor(rectangle, cv2.COLOR_RGB2GRAY)
 

@@ -48,9 +48,9 @@ def findValids(img_orig, calibration, rect_cnt):
     mask = np.copy(mask_threshold)
     after_basic = datetime.now()
     time_to_basic = after_basic- before_basic
-    # print("microseconds to perform basic operations:", time_to_basic.microseconds)
 
     if debug:
+        print("microseconds to perform basic operations:", time_to_basic.microseconds)
         cv2.imwrite('original_frame.png', img_orig)
         cv2.imwrite('original_mask.png', mask_orig)
         cv2.imwrite('mask_eroded_dilated.png', mask_eroded_dilated)
