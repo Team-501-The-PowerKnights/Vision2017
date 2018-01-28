@@ -71,9 +71,8 @@ def findValids(img_orig, calibration, rect_cnt):
             cy = (cy1 + cy2) / 2
         
         # Calculate angle and distance
-            angle = IC.findAnglePeg(BFR_img, cx1, cx2)
-            distance = IC.findDistance(BFR_img, Rect_coor)
-
+            angle = IC.findAngle(BFR_img, cx1, cx2)
+            distance = 0
         else:
             validUpdate = False
             BFR_img = img_orig
