@@ -80,7 +80,8 @@ def runConfig():
       search = True
    else:
       search = False
-   print("debug: ", debug)
+   if debug:
+      print("INFO: debug set.")
    red = {"red_upper": red_upper, "red_lower": red_lower}
    blue = {"blue_upper": blue_upper, "blue_lower": blue_lower}
    green = {"green_upper": green_upper, "green_lower": green_lower}

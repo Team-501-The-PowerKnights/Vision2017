@@ -15,3 +15,6 @@ freqFrameNT = 10
 debug = 0
 [search]
 search = 0
+[vertices]
+vertx = 1
+verty = 1
