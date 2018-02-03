@@ -57,14 +57,10 @@ def findValids(img_orig, calibration, rect_cnt):
 
         if valid:
             validUpdate = True
-            print("Valid target found.")
-        # Find and draw center
+        # Find center
             cx1, cy1 = IC.findCenter(cnt[0])
             cx2, cy2 = IC.findCenter(cnt[1])
-            cx = (cx1 + cx2) / 2
-            cy = (cy1 + cy2) / 2
-        
-        # Calculate angle and distance
+        # Calculate angle, set distance to zero
             angle = IC.findAngle(BFR_img, cx1, cx2)
             distance = 0
         else:

@@ -19,7 +19,6 @@ def isValidShape(contour, rect_cnt):
     matchThreshold = 0.35
 
     match_quality = cv2.matchShapes(rect_cnt, contour, 2, 0)
-    print("match quality: ", match_quality)
     if match_quality < matchThreshold:
         return True
     else:

@@ -7,14 +7,14 @@ red_upper = 255,255,255
 red_lower = 255,255,255
 blue_upper = 255,255,255
 blue_lower = 255,255,255
-green_upper = 255,255,255
-green_lower = 255,255,255
+green_upper = 85,255,227
+green_lower = 73,129,83
 [framerate]
 freqFrameNT = 10
 [debug]
-debug = 0
+debug = 1
 [search]
-search = 0
+search = 1
 [vertices]
-vertx = 1
-verty = 1
+vertx = 60
+verty = 326

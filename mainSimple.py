@@ -57,10 +57,15 @@ def nt_init():
         return camera_table
 
 def create_rect():
+    """
+    Creates a rectangle and performs appropriate processing to provide a target
+
+    returns the contour object of the rectangle
+    """
     rectangle = np.zeros((350, 350, 3), np.uint8)
     cv2.rectangle(rectangle, (20, 20), (vertx, verty), (255, 255, 255), -1)
     rectangle = cv2.cvtColor(rectangle, cv2.COLOR_RGB2GRAY)
-    cv2.imwrite('generated_rectangle.png', rectangle)
+    # cv2.imwrite('generated_rectangle.png', rectangle)
 
     ret, thresh = cv2.threshold(rectangle, 127, 255, cv2.THRESH_BINARY)
     img, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, 1)
@@ -97,7 +102,7 @@ def run(cap, camera_table, calibration, freqFramesNT, rect_cnt):
             #try:
                 Angle, Distance, validUpdate, Processed_frame, mask, cnt = FT.findValids(frame, calibration, rect_cnt)
                 if validUpdate:
-                    print("Valid Target Found:", validCount)
+                    print("Valid Target Found:", validCount, "angle: ", Angle)
                     validCount += 1
                 if n > freqFramesNT:
                     # Send to NetworkTable
