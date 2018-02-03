@@ -100,9 +100,9 @@ def run(cap, switch, calibration):
         # print("img is", img)
         cv2.imshow('image', img)
         k = cv2.waitKey(15) & 0xFF
-        if k == 27 or k == 113:
+        if k == 27 or k == 113: # 'q' or ESC pressed
             break
-        if k == 119:
+        if k == 119: # 'w' pressed
             calibration['green']['green_lower'] = [str(hl), str(sl), str(vl)]
             calibration['green']['green_upper'] = [str(hh), str(sh), str(vh)]
             write_cal(calibration)

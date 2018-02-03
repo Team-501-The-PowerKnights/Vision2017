@@ -99,19 +99,9 @@ def runConfig(cfg):
 def write_cal(cal):
     config = configparser.ConfigParser()
     config.read('config.ini')
-
-    if not config.has_section('mask'):
-        print("config.ini does not contain mask section.")
-
-    if not config.has_option('mask', 'green_upper') and config.has_option('mask', 'green_lower'):
-        print("config.ini mask section does not contain appropriate calibration parameters.")
-
-    config.set('mask', 'green_upper', ','.join(cal['green']['green_upper']))
+    config.set('mask', 'green_upper', ','.join(cal['green']['green_upper'])) # convert lists into single strings
     config.set('mask', 'green_lower', ','.join(cal['green']['green_lower']))
 
-    # print(config['mask']['red_upper'])
-    # print(config['mask']['green_upper'])
-    # print(config['mask']['green_lower'])
     print('Validating configuration and writing to disk.')
     runConfig(config)
     with open('config.ini', 'w') as configfile:

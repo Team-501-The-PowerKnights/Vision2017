@@ -75,7 +75,7 @@ def image_operations(img_orig,config):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)  # HERE
     mask_orig = cv2.inRange(hsv, lower_bound, upper_bound)
     mask = np.copy(mask_orig)  # HERE
-    mask_eroded_dilated = MI.dilateAndErode(mask, 5)
+    mask_eroded_dilated = MI.erodeAndDilate(mask)
     mask = np.copy(mask_eroded_dilated)  # HERE
     ret, mask_threshold = cv2.threshold(mask, 127, 255, 0)
     mask = np.copy(mask_threshold)  # HERE
