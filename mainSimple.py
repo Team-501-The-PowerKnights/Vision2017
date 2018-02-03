@@ -60,6 +60,7 @@ def create_rect():
     rectangle = np.zeros((350, 350, 3), np.uint8)
     cv2.rectangle(rectangle, (20, 20), (vertx, verty), (255, 255, 255), -1)
     rectangle = cv2.cvtColor(rectangle, cv2.COLOR_RGB2GRAY)
+    cv2.imwrite('generated_rectangle.png', rectangle)
 
     ret, thresh = cv2.threshold(rectangle, 127, 255, cv2.THRESH_BINARY)
     img, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, 1)
@@ -91,17 +92,12 @@ def run(cap, camera_table, calibration, freqFramesNT, rect_cnt):
     validCount = 0
     n = 0
     while(cap.isOpened()):
-        before_complete_run=datetime.now()
-        before_read = datetime.now()
         ret, frame = cap.read()
-        after_read = datetime.now()
-        time_to_read = after_read-before_read
-        #print("Microseconds to read the capture:", time_to_read.microseconds)
         if ret: # if frame succesfully read
             #try:
-                before_run = datetime.now()
                 Angle, Distance, validUpdate, Processed_frame, mask, cnt = FT.findValids(frame, calibration, rect_cnt)
                 if validUpdate:
+                    print("Valid Target Found:", validCount)
                     validCount += 1
                 if n > freqFramesNT:
                     # Send to NetworkTable
@@ -109,14 +105,8 @@ def run(cap, camera_table, calibration, freqFramesNT, rect_cnt):
                     n = 0
                 else:
                     n += 1
-                after_run = datetime.now()
-                time_to_run = after_run - before_run
-                #print("microseconds to run findValids:",time_to_run.microseconds)
-                after_complete_run = datetime.now()
-                time_to_complete_run = after_complete_run - before_complete_run
-                print("microseconds to complete run:", time_to_complete_run.microseconds)
             #except:
-             #   print('There was an error with findValids')
+            #   print('There was an error with findValids')
     else:
         print('cap is not opened')
 

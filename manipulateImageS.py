@@ -50,11 +50,10 @@ def drawBFR(img_orig, box, corners):
         cv2.circle(img_orig, (x,y), 5, (255, 0, 255), -1)
     
     
-def dilateAndErode(img, size):
-    kernel = np.ones((size,size), np.uint8)
-    dilation = cv2.dilate(img,kernel,iterations=1)
-    erosion = cv2.erode(dilation,kernel,iterations = 1)
-    return erosion 
+def erodeAndDilate(img):
+    erosion = cv2.erode(img, None, iterations=2)
+    dilation = cv2.dilate(erosion, None, iterations=2)
+    return dilation
     
 def drawLine2Target(image, cx, cy):
     h, w, c = image.shape # h = height, w = width, c = channel
