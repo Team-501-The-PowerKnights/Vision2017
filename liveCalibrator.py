@@ -1,16 +1,32 @@
+"""
+Live calibrator for opencv2 HSV masking / FIRST Robotics
+Reads config.ini for previous values to 'get close'
+Uses main vision source, the mjpegstreamer onboard
+
+ESC or q to quit
+w to write updated calibration to config.ini (along with the rest of the previous config)
+
+CAUTION: this program reads and writes the main vision config.ini
+IF IT BREAKS, YOU WILL HAVE A BAD DAY.
+
+author: ionigman@gmail.com
+
+License: Free As In Beer
+
+"""
+
 import cv2
 import numpy as np
-from config import runConfig
-
+from config import runConfig, write_cal
 
 
 def nothing(x):
     pass
 
 
-def init_capture():
+def init_capture(cam):
     try:
-        cap = cv2.VideoCapture('http://localhost:1180/?action=stream?dummy=param.mjpg')
+        cap = cv2.VideoCapture(eval(cam))
         return cap
     except:
         print('capture failed.')
@@ -48,14 +64,13 @@ def init_window(calibration):
 
 
 def main():
-    _, _, calibration, _, _, _ = runConfig()
-    cap = init_capture()
+    _, cam, calibration, _, _, _ = runConfig(None)
+    cap = init_capture(cam)
     switch = init_window(calibration)
-    run(cap, switch)
+    run(cap, switch, calibration)
 
 
-def run(cap, switch):
-
+def run(cap, switch, calibration):
     while True:
         img = None
         try:
@@ -85,7 +100,12 @@ def run(cap, switch):
         # print("img is", img)
         cv2.imshow('image', img)
         k = cv2.waitKey(15) & 0xFF
-        if k == 27:
+        if k == 27 or k == 113:
+            break
+        if k == 119:
+            calibration['green']['green_lower'] = [str(hl), str(sl), str(vl)]
+            calibration['green']['green_upper'] = [str(hh), str(sh), str(vh)]
+            write_cal(calibration)
             break
     cv2.destroyAllWindows()
 

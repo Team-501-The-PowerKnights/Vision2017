@@ -1,9 +1,8 @@
 import sys
 import configparser
-config = configparser.ConfigParser()
 
 
-def runConfig():
+def runConfig(cfg):
    """
    reads a  configuration file (config.ini) in standard format.
    [header]
@@ -11,13 +10,20 @@ def runConfig():
 
    quotations are not required.
    """
+   config = configparser.ConfigParser()
+
    die=0
-   print("INFO: reading configuration from config.ini")
-   try:
-      config.read('config.ini')
-   except:
-      print("ERROR: Unable to read config.ini Dying.")
-      sys.exit(1)
+
+   if cfg is None:
+       print("INFO: reading configuration from config.ini")
+       #try:
+       config.read('config.ini')
+       #except:
+       #   print("ERROR: Unable to read config.ini Dying.")
+       #   sys.exit(1)
+   else:
+       config = cfg
+
    try:
       os = config['os']['operatingSystem']
       camera = config['camera']['cameraDevice']
@@ -88,3 +94,26 @@ def runConfig():
    calibration = {"red": red, "blue": blue, "green": green, "debug": debug, "search": search}
 
    return os, camera, calibration, freqFrameNT, vertx, verty
+
+
+def write_cal(cal):
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+
+    if not config.has_section('mask'):
+        print("config.ini does not contain mask section.")
+
+    if not config.has_option('mask', 'green_upper') and config.has_option('mask', 'green_lower'):
+        print("config.ini mask section does not contain appropriate calibration parameters.")
+
+    config.set('mask', 'green_upper', ','.join(cal['green']['green_upper']))
+    config.set('mask', 'green_lower', ','.join(cal['green']['green_lower']))
+
+    # print(config['mask']['red_upper'])
+    # print(config['mask']['green_upper'])
+    # print(config['mask']['green_lower'])
+    print('Validating configuration and writing to disk.')
+    runConfig(config)
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
+    return True
