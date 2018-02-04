@@ -82,22 +82,20 @@ def run(cap, switch, calibration):
         except:
             print('capture read exception')
 
-        # get current positions of four trackbars
-        hl = cv2.getTrackbarPos('H_low','image')
-        hh = cv2.getTrackbarPos('H_high','image')
+        hl = cv2.getTrackbarPos('H_low', 'image')
+        hh = cv2.getTrackbarPos('H_high', 'image')
         sl = cv2.getTrackbarPos('S_low', 'image')
         sh = cv2.getTrackbarPos('S_high', 'image')
-        vl = cv2.getTrackbarPos('V_low','image')
-        vh = cv2.getTrackbarPos('V_high','image')
+        vl = cv2.getTrackbarPos('V_low', 'image')
+        vh = cv2.getTrackbarPos('V_high', 'image')
         lower_bound = np.array([hl, sl, vl])
         upper_bound = np.array([hh, sh, vh])
 
-        s = cv2.getTrackbarPos(switch,'image')
+        s = cv2.getTrackbarPos(switch, 'image')
         if s == 0:
             pass
         else:
-            img = cv2.inRange(hsv,lower_bound,upper_bound)
-        # print("img is", img)
+            img = cv2.inRange(hsv, lower_bound, upper_bound)
         cv2.imshow('image', img)
         k = cv2.waitKey(15) & 0xFF
         if k == 27 or k == 113: # 'q' or ESC pressed
