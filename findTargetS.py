@@ -66,7 +66,7 @@ def findValids(img_orig, calibration, rect_cnt):
         else:
             validUpdate = False
             BFR_img = img_orig
-            print("No valid targets found.")
+            # print("No valid targets found.")
         return angle, distance, validUpdate, BFR_img, mask_orig, cnt
     else:
         return 0, 0, 0, img_orig, mask_orig, [0, 0]

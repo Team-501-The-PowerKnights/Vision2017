@@ -19,7 +19,7 @@ import findTargetS as FT
 
 logging.basicConfig(level=logging.DEBUG)
 
-os, camera_location, calibration, freqFramesNT, vertx, verty = runConfig()
+os, camera_location, calibration, freqFramesNT, vertx, verty = runConfig(None)
 
 
 
@@ -37,7 +37,7 @@ def nt_init():
     #NetworkTables.initialize(server='10.5.1.141')
     # port 1735
     try:
-        NetworkTables.initialize(server='10.5.1.133')
+        NetworkTables.initialize(server='10.5.1.193')
         init = True
     except:
         print("Unable to initialize network tables.")
@@ -73,11 +73,11 @@ def create_rect():
     return cnt
 
 
-def nt_send(camera_table, Angle, Distance, validCount):
+def nt_send(camera_table, Angle, validCount, validUpdate):
     try:
         camera_table.putNumber('Angle', Angle)
         camera_table.putNumber('ValidCount', validCount)
-        camera_table.putNumber('Distance', Distance)
+        camera_table.putBoolean('ValidUpdate', validUpdate)
     except:
         print("Unable to send data to networktables.")
 
@@ -102,11 +102,11 @@ def run(cap, camera_table, calibration, freqFramesNT, rect_cnt):
             #try:
                 Angle, Distance, validUpdate, Processed_frame, mask, cnt = FT.findValids(frame, calibration, rect_cnt)
                 if validUpdate:
-                    print("Valid Target Found:", validCount, "angle: ", Angle)
+                    # print("Valid Target Found:", validCount, "angle: ", Angle)
                     validCount += 1
                 if n > freqFramesNT:
                     # Send to NetworkTable
-                    nt_send(camera_table, Angle, Distance, validCount)
+                    nt_send(camera_table, Angle, validCount, validUpdate)
                     n = 0
                 else:
                     n += 1
