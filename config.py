@@ -99,7 +99,7 @@ def runConfig(cfg):
 def write_cal(cal):
     config = configparser.ConfigParser()
     config.read('config.ini')
-    config.set('mask', 'green_upper', ','.join(cal['green']['green_upper'])) # convert lists into single strings
+    config.set('mask', 'green_upper', ','.join(cal['green']['green_upper']))  # convert lists into single strings
     config.set('mask', 'green_lower', ','.join(cal['green']['green_lower']))
 
     print('Validating configuration and writing to disk.')

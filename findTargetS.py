@@ -10,17 +10,22 @@ import numpy as np
 import manipulateImageS as MI 
 import imageCalculationsS as IC
 import validateTargetS as VT
-from datetime import datetime
+
 
 def findValids(img_orig, calibration, rect_cnt):
     """
-    Input: img_orig -> image, filename of npz file, whether we're in debug mode
-    Output: angle -> float, distance -> float, validUpdate -> boolean of whether we've found
-    correct targets, BFR_img -> image that has best fit rectangle drawn on it and lines for centering,
-    mask_orig -> image of the mask, cnt -> list of contours found for targets
+    Input: image from camera, calibration information, contours from generated rectangle
+    Output:
+        angle -> float, angle from camera center to target center
+        distance = 0, no longer used
+        validUpdate -> boolean, valid target found
+        BFR_img -> image, best fit rectangle of target
+        mask_orig -> image, unmodified mask
+        cnt -> list of contours found for targets
     
-    This function uses the npz file values to create a mask of the target. It then
-    finds valid targets, calculates the angle and distance, and visualizes the result
+    This function uses calibration information to create a mask of the target. It then
+    finds valid targets comparing to the rectangle contours, calculates the angle to target center,
+    and provides graphical representations for future use.
     """
     debug = calibration["debug"]
     search = calibration["search"]
@@ -36,7 +41,7 @@ def findValids(img_orig, calibration, rect_cnt):
     upper_bound = np.array(calibration["green"]["green_upper"])
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    mask_orig = cv2.inRange(hsv,lower_bound,upper_bound)
+    mask_orig = cv2.inRange(hsv, lower_bound, upper_bound)
     
     mask = np.copy(mask_orig)
     
@@ -47,6 +52,7 @@ def findValids(img_orig, calibration, rect_cnt):
     mask = np.copy(mask_threshold)
 
     if debug:
+        print('DEBUG: writing image and mask files')
         cv2.imwrite('original_frame.png', img_orig)
         cv2.imwrite('original_mask.png', mask_orig)
         cv2.imwrite('mask_eroded_dilated.png', mask_eroded_dilated)
@@ -57,16 +63,13 @@ def findValids(img_orig, calibration, rect_cnt):
 
         if valid:
             validUpdate = True
-        # Find center
             cx1, cy1 = IC.findCenter(cnt[0])
             cx2, cy2 = IC.findCenter(cnt[1])
-        # Calculate angle, set distance to zero
             angle = IC.findAngle(BFR_img, cx1, cx2)
             distance = 0
         else:
             validUpdate = False
             BFR_img = img_orig
-            # print("No valid targets found.")
         return angle, distance, validUpdate, BFR_img, mask_orig, cnt
     else:
         return 0, 0, 0, img_orig, mask_orig, [0, 0]

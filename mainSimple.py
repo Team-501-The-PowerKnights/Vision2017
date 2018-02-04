@@ -28,7 +28,7 @@ def main():
     camera_table = nt_init()
     cap = cap_init(camera_location)
     rect_cnt = create_rect()
-    run(cap, camera_table, calibration, freqFramesNT, rect_cnt)
+    run(cap, camera_table, calibration, freqFramesNT, rect_cnt)  # main loop contained here. will not return to main.
 
 
 def nt_init():
@@ -65,8 +65,6 @@ def create_rect():
     rectangle = np.zeros((350, 350, 3), np.uint8)
     cv2.rectangle(rectangle, (20, 20), (vertx, verty), (255, 255, 255), -1)
     rectangle = cv2.cvtColor(rectangle, cv2.COLOR_RGB2GRAY)
-    # cv2.imwrite('generated_rectangle.png', rectangle)
-
     ret, thresh = cv2.threshold(rectangle, 127, 255, cv2.THRESH_BINARY)
     img, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, 1)
     cnt = contours[0]
@@ -79,16 +77,15 @@ def nt_send(camera_table, Angle, validCount, validUpdate):
         camera_table.putNumber('ValidCount', validCount)
         camera_table.putBoolean('ValidUpdate', validUpdate)
     except:
-        print("Unable to send data to networktables.")
+        print("Unable to send data to networktables. Continuing.")
 
 
 def cap_init(camera_location):
     try:
-        #print("camera location is:" + camera_location)
-        cap = cv2.VideoCapture("http://127.0.0.1:1180/?action=stream?dummy=param.mjpeg")
-        time.sleep(2)
+        cap = cv2.VideoCapture(eval(camera_location))
+        time.sleep(1)
     except:
-        print("Execption on VideoCapture init. Dying")
+        print("Exception on VideoCapture init. Dying")
         sys.exit()
     return cap
 
@@ -98,22 +95,22 @@ def run(cap, camera_table, calibration, freqFramesNT, rect_cnt):
     n = 0
     while(cap.isOpened()):
         ret, frame = cap.read()
-        if ret: # if frame succesfully read
-            #try:
+        if ret:  # if frame successfully read
+            try:
                 Angle, Distance, validUpdate, Processed_frame, mask, cnt = FT.findValids(frame, calibration, rect_cnt)
                 if validUpdate:
-                    # print("Valid Target Found:", validCount, "angle: ", Angle)
                     validCount += 1
                 if n > freqFramesNT:
-                    # Send to NetworkTable
                     nt_send(camera_table, Angle, validCount, validUpdate)
                     n = 0
                 else:
                     n += 1
-            #except:
-            #   print('There was an error with findValids')
+            except:
+                print('There was an error with findValids. Continuing.')
+        else:
+            print('Unable to read frame. Continuing.')
     else:
-        print('cap is not opened')
+        print('Capture is not opened. Ending Program.')
 
 
 if __name__ == "__main__":
